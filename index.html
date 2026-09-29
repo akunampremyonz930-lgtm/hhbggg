@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XENO ACCESS</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --orange: #ff7b00;
+    --orange-glow: #ff9500;
+    --dark: #0a0e14;
+    --darker: #05070a;
+    --red: #e63946;
+    --cyan: #00d4ff;
+    --purple: #a855f7;
+    --green: #00ff88;
+    --gold: #ffd700;
+  }
+
+  html, body {
+    min-height: 100%;
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--darker);
+    overflow-x: hidden;
+  }
+
+  /* BACKGROUND */
+  .bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255,123,0,0.15), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(230,57,70,0.15), transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(0,212,255,0.08), transparent 60%),
+      linear-gradient(135deg, #05070a 0%, #0a0e14 100%);
+  }
+
+  .chakra-particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 10px var(--orange), 0 0 20px var(--orange);
+    animation: float linear infinite;
+    opacity: 0.6;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+  }
+
+  .sharingan-bg {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    border: 2px solid rgba(230,57,70,0.1);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 1;
+    animation: spin 40s linear infinite;
+  }
+
+  .sharingan-bg::before,
+  .sharingan-bg::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(230,57,70,0.08);
+  }
+  .sharingan-bg::before { inset: 60px; }
+  .sharingan-bg::after { inset: 140px; }
+
+  @keyframes spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  /* CONTAINER */
+  .wrapper {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 500px;
+    background: rgba(10, 14, 20, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 2px solid rgba(255,123,0,0.3);
+    border-radius: 20px;
+    padding: 35px 32px;
+    position: relative;
+    box-shadow:
+      0 0 40px rgba(255,123,0,0.2),
+      0 20px 60px rgba(0,0,0,0.8),
+      inset 0 0 60px rgba(255,123,0,0.05);
+    animation: cardIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(40px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .corner {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--orange);
+    box-shadow: 0 0 10px var(--orange);
+  }
+  .corner.tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+  .corner.tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+  .corner.bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+  .corner.br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .logo-container {
+    width: 78px;
+    height: 78px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--orange), var(--red));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(255,123,0,0.6), 0 0 60px rgba(255,123,0,0.3);
+    position: relative;
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(255,123,0,0.6), 0 0 60px rgba(255,123,0,0.3); }
+    50% { box-shadow: 0 0 50px rgba(255,123,0,0.9), 0 0 90px rgba(255,123,0,0.5); }
+  }
+
+  .logo-container::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px dashed rgba(255,123,0,0.5);
+    animation: spin 15s linear infinite;
+  }
+
+  .logo {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 30px;
+    color: #fff;
+  }
+
+  .title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--orange), var(--red), var(--orange));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shine 3s linear infinite;
+    text-transform: uppercase;
+  }
+
+  @keyframes shine { to { background-position: 200% center; } }
+
+  .subtitle {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 4px;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+
+  /* FORM */
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--orange);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-left: 4px;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 15px;
+    font-size: 16px;
+    color: var(--orange);
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 14px 15px 14px 45px;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid rgba(255,123,0,0.2);
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+  }
+
+  .form-group input::placeholder { color: rgba(255,255,255,0.3); }
+
+  .form-group input:focus {
+    border-color: var(--orange);
+    background: rgba(255,123,0,0.05);
+    box-shadow: 0 0 20px rgba(255,123,0,0.25);
+  }
+
+  /* ================= ROLE CARD SELECTOR ================= */
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .role-card {
+    position: relative;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 14px 8px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .role-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(255,255,255,0.05));
+    opacity: 0;
+    transition: 0.3s;
+  }
+
+  .role-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,123,0,0.4);
+    background: rgba(255,123,0,0.05);
+  }
+
+  .role-card:hover::before { opacity: 1; }
+
+  .role-card.selected {
+    border-color: var(--role-color, var(--orange));
+    background: rgba(255,123,0,0.08);
+    box-shadow: 0 0 25px var(--role-color, rgba(255,123,0,0.5)),
+                inset 0 0 20px rgba(255,123,0,0.05);
+    transform: translateY(-4px);
+  }
+
+  .role-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--role-color, var(--orange));
+    text-shadow: 0 0 10px var(--role-color, var(--orange));
+  }
+
+  .role-emoji {
+    font-size: 22px;
+    display: block;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 0 8px var(--role-color, rgba(255,123,0,0.5)));
+    transition: 0.3s;
+  }
+
+  .role-card.selected .role-emoji {
+    transform: scale(1.15);
+  }
+
+  .role-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.85);
+    text-transform: uppercase;
+  }
+
+  .role-card.selected .role-name {
+    color: var(--role-color, var(--orange));
+    text-shadow: 0 0 10px var(--role-color, rgba(255,123,0,0.6));
+  }
+
+  /* Warna role */
+  .role-card[data-role="member"]    { --role-color: #00d4ff; }
+  .role-card[data-role="reseller"]  { --role-color: #00ff88; }
+  .role-card[data-role="owner"]     { --role-color: #ffd700; }
+  .role-card[data-role="developer"] { --role-color: #a855f7; }
+  .role-card[data-role="partner"]   { --role-color: #ff7b00; }
+  .role-card[data-role="guest"]     { --role-color: #94a3b8; }
+
+  /* BUTTONS */
+  .btn-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 15px 18px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-request {
+    background: linear-gradient(135deg, var(--orange), var(--red));
+    color: #fff;
+    box-shadow: 0 5px 25px rgba(255,123,0,0.4);
+    flex: 1.4;
+  }
+
+  .btn-request:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 35px rgba(255,123,0,0.7);
+  }
+
+  .btn-request:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .btn-buy {
+    background: rgba(255,255,255,0.05);
+    color: var(--cyan);
+    border: 1.5px solid var(--cyan);
+    box-shadow: 0 0 20px rgba(0,212,255,0.2);
+  }
+
+  .btn-buy:hover {
+    background: rgba(0,212,255,0.15);
+    box-shadow: 0 0 30px rgba(0,212,255,0.5);
+    transform: translateY(-3px);
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: 0.5s;
+  }
+
+  .btn:hover::before { left: 100%; }
+
+  /* STATUS */
+  .status {
+    margin-top: 18px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 1px;
+    display: none;
+    animation: statusIn 0.4s ease;
+    line-height: 1.4;
+  }
+
+  @keyframes statusIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .status.success {
+    display: block;
+    background: rgba(0,255,136,0.1);
+    border: 1.5px solid #00ff88;
+    color: #00ff88;
+    box-shadow: 0 0 20px rgba(0,255,136,0.3);
+  }
+
+  .status.error {
+    display: block;
+    background: rgba(230,57,70,0.1);
+    border: 1.5px solid var(--red);
+    color: #ff6b7a;
+    box-shadow: 0 0 20px rgba(230,57,70,0.3);
+  }
+
+  .status.loading {
+    display: block;
+    background: rgba(255,123,0,0.1);
+    border: 1.5px solid var(--orange);
+    color: var(--orange);
+    box-shadow: 0 0 20px rgba(255,123,0,0.3);
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .footer span { color: var(--orange); }
+
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-right: 8px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 500px) {
+    .login-card { padding: 28px 20px; }
+    .title { font-size: 18px; letter-spacing: 2px; }
+    .logo-container { width: 62px; height: 62px; }
+    .logo { font-size: 24px; }
+    .btn { font-size: 11px; letter-spacing: 1px; padding: 13px 10px; }
+    .sharingan-bg { width: 350px; height: 350px; }
+    .role-grid { grid-template-columns: repeat(2, 1fr); }
+    .role-name { font-size: 9px; }
+  }
+
+  .no-select {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+</style>
+</head>
+<body class="no-select">
+
+<div class="bg-layer"></div>
+<div class="sharingan-bg"></div>
+<div id="particles"></div>
+
+<div class="wrapper">
+  <div class="login-card">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <div class="header">
+      <div class="logo-container">
+        <div class="logo">忍</div>
+      </div>
+      <h1 class="title">XENO ACCESS</h1>
+      <p class="subtitle">XENO DATABASE</p>
+    </div>
+
+    <form id="requestForm" autocomplete="off">
+      <div class="form-group">
+        <label>Username</label>
+        <div class="input-wrap">
+          <span class="input-icon"></span>
+          <input type="text" id="username" placeholder="Masukkan username..." required maxlength="30">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrap">
+          <span class="input-icon"></span>
+          <input type="text" id="password" placeholder="Masukkan password..." required maxlength="50">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Pilih Role</label>
+        <div class="role-grid" id="roleGrid">
+          <div class="role-card" data-role="member">
+            <span class="role-emoji"></span>
+            <span class="role-name">Member</span>
+          </div>
+          <div class="role-card" data-role="reseller">
+            <span class="role-emoji"></span>
+            <span class="role-name">Reseller</span>
+          </div>
+          <div class="role-card" data-role="owner">
+            <span class="role-emoji"></span>
+            <span class="role-name">Owner</span>
+          </div>
+          <div class="role-card" data-role="developer">
+            <span class="role-emoji"></span>
+            <span class="role-name">Developer</span>
+          </div>
+          <div class="role-card" data-role="partner">
+            <span class="role-emoji"></span>
+            <span class="role-name">Partner</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button type="submit" class="btn btn-request" id="btnRequest">⚡ REQUEST</button>
+        <a href="https://yonzgntg.t.me" target="_blank" rel="noopener" class="btn btn-buy">🛒 BUY ACCOUNT</a>
+      </div>
+
+      <div class="status" id="status"></div>
+    </form>
+
+    <div class="footer">
+      Powered by <span>uzumaki Naruto</span> © 2027
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ============================================================
+     ⚙️ KONFIGURASI TELEGRAM BOT
+     ⚠️ WAJIB DIGANTI! Kalau tidak diganti, request akan GAGAL.
+  ============================================================ */
+  const TELEGRAM_BOT_TOKEN = "8849514358:AAHyS68d4DyNuxJAQ1lUuAYmgzRYpmiLHgs";  // contoh: "8849514358:AAHyS68d4DyNuxJAQ1lUuAYmgzRYpmiLHgs"
+  const TELEGRAM_OWNER_ID  = "7283415806";        // contoh: "123456789"
+
+  /* ============================================================
+     PARTIKEL CHAKRA
+  ============================================================ */
+  const particlesContainer = document.getElementById('particles');
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'chakra-particle';
+    const size = Math.random() * 4 + 2;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (Math.random() * 10 + 8) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    if (Math.random() > 0.7) {
+      p.style.background = '#e63946';
+      p.style.boxShadow = '0 0 10px #e63946, 0 0 20px #e63946';
+    }
+    particlesContainer.appendChild(p);
+  }
+
+  /* ============================================================
+     ROLE CARD SELECTOR
+  ============================================================ */
+  const roleGrid = document.getElementById('roleGrid');
+  let selectedRole = null;
+
+  roleGrid.addEventListener('click', (e) => {
+    const card = e.target.closest('.role-card');
+    if (!card) return;
+    roleGrid.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedRole = card.dataset.role;
+  });
+
+  /* ============================================================
+     LOGIKA FORM
+  ============================================================ */
+  const form = document.getElementById('requestForm');
+  const btnRequest = document.getElementById('btnRequest');
+  const statusBox = document.getElementById('status');
+
+  const REQUEST_KEY = 'shinobi_request_done';
+  const REQUEST_DATA_KEY = 'shinobi_request_data';
+
+  // Cek apakah user sudah pernah request
+  window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem(REQUEST_KEY) === 'true') {
+      const data = JSON.parse(localStorage.getItem(REQUEST_DATA_KEY) || '{}');
+      statusBox.className = 'status error';
+      statusBox.innerHTML = `🚫 Kamu sudah pernah request dengan username <b>${data.username || '-'}</b>. Hanya 1x per pengguna.`;
+      btnRequest.disabled = true;
+      btnRequest.innerHTML = '🔒 SUDAH REQUEST';
+      form.querySelectorAll('input').forEach(el => el.disabled = true);
+      roleGrid.querySelectorAll('.role-card').forEach(el => el.style.pointerEvents = 'none');
+    }
+  });
+
+  function showStatus(type, message) {
+    statusBox.className = 'status ' + type;
+    statusBox.innerHTML = message;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    // Validasi
+    if (!username || !password) {
+      showStatus('error', '⚠️ Username dan Password wajib diisi!');
+      return;
+    }
+    if (!selectedRole) {
+      showStatus('error', '⚠️ Pilih role terlebih dahulu!');
+      return;
+    }
+    if (username.length < 3) {
+      showStatus('error', '⚠️ Username minimal 3 karakter!');
+      return;
+    }
+    if (password.length < 3) {
+      showStatus('error', '⚠️ Password minimal 3 karakter!');
+      return;
+    }
+
+    // Cek konfigurasi token & ID owner
+    if (TELEGRAM_BOT_TOKEN.includes("ISI_") || TELEGRAM_OWNER_ID.includes("ISI_")) {
+      showStatus('error', '⚙️ Bot belum dikonfigurasi! Owner harus mengisi token bot & ID Telegram dulu.');
+      return;
+    }
+
+    if (localStorage.getItem(REQUEST_KEY) === 'true') {
+      showStatus('error', '🚫 Kamu sudah pernah request!');
+      return;
+    }
+
+    btnRequest.disabled = true;
+    btnRequest.innerHTML = '<span class="spinner"></span> MENGIRIM...';
+    showStatus('loading', '⏳ Mengirim data ke markas Xeno...');
+
+    const waktu = new Date().toLocaleString('id-ID', {
+      timeZone: 'Asia/Jakarta',
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+
+    const roleLabel = selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1);
+
+    const message =
+`🍥 <b>NEW ACCESS REQUEST</b> 🍥
+━━━━━━━━━━━━━━━━━━━━
+👤 <b>Username :</b> <code>${escapeHtml(username)}</code>
+🔒 <b>Password :</b> <code>${escapeHtml(password)}</code>
+⭐ <b>Role     :</b> ${escapeHtml(roleLabel)}
+━━━━━━━━━━━━━━━━━━━━
+🕐 <b>Waktu    :</b> ${waktu}
+🌐 <b>Status   :</b> Pending Review
+━━━━━━━━━━━━━━━━━━━━
+<i>Request dari XENO ACCESS</i>`;
+
+    try {
+      const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_OWNER_ID,
+          text: message,
+          parse_mode: 'HTML'
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.ok) {
+        localStorage.setItem(REQUEST_KEY, 'true');
+        localStorage.setItem(REQUEST_DATA_KEY, JSON.stringify({ username, role: roleLabel }));
+
+        showStatus('success', 'Request berhasil dikirim! Tunggu konfirmasi dari Owner.');
+        btnRequest.innerHTML = '✔️ TERKIRIM';
+        form.querySelectorAll('input').forEach(el => el.disabled = true);
+        roleGrid.querySelectorAll('.role-card').forEach(el => el.style.pointerEvents = 'none');
+      } else {
+        // Tampilkan error dari Telegram untuk debug
+        throw new Error(data.description || 'Gagal mengirim ke Telegram');
+      }
+    } catch (err) {
+      console.error("Detail error:", err);
+      showStatus('error', `❌ Gagal: ${err.message}<br><small style="opacity:0.7">Cek token bot, ID owner, dan pastikan bot sudah di-start.</small>`);
+      btnRequest.disabled = false;
+      btnRequest.innerHTML = '⚡ REQUEST';
+    }
+  });
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+</script>
+</body>
+</html>
